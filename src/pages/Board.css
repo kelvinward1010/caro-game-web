@@ -1,0 +1,56 @@
+.container{
+    margin-top: 10px;
+}
+.actions-board{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.board-main{
+    display: flex;
+    justify-content: center;
+}
+
+.board {
+    position: relative;
+}
+
+.button-reset{
+    cursor: pointer;
+}
+
+.selectsize{
+    background: teal;
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.winning-cell {
+    background-color: red;
+    color: white;
+}
+
+.winning-line {
+    position: absolute;
+    height: 2px;
+    background-color: red;
+    transform-origin: left center;
+    pointer-events: none;
+}
