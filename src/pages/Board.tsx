@@ -13,6 +13,8 @@ export const Board: React.FC = () => {
     const [winner, setWinner] = useState<string | null>(null);
     const [winningLine, setWinningLine] = useState<number[][]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [history, setHistory] = useState([createEmptyGrid(gridSize)]);
+    const [stepNumber, setStepNumber] = useState(0);
 
     const handleClick = (row: number, col: number) => {
         if (grid[row][col] || winner) return;
@@ -21,7 +23,10 @@ export const Board: React.FC = () => {
                 rowIndex === row && colIndex === col ? currentPlayer : cell
             )
         );
+        const newHistory = history.slice(0, stepNumber + 1);
         setGrid(newGrid);
+        setHistory([...newHistory, newGrid]);
+        setStepNumber(newHistory.length);
         checkWinner(newGrid, row, col);
         setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
     };
@@ -58,18 +63,37 @@ export const Board: React.FC = () => {
     };
 
     const resetGame = () => {
-        setGrid(createEmptyGrid(gridSize));
+        const newGrid = createEmptyGrid(gridSize);
+        setGrid(newGrid);
+        setHistory([newGrid]);
         setCurrentPlayer('X');
+        setStepNumber(0);
         setWinner(null);
         setWinningLine([]);
-    }
+    };
+
+    const undoMove = () => {
+        if (stepNumber > 0) {
+            setStepNumber(stepNumber - 1);
+            setGrid(history[stepNumber - 1]);
+            setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+        }
+    };
+
+    const redoMove = () => {
+        if (stepNumber < history.length - 1) {
+            setStepNumber(stepNumber + 1);
+            setGrid(history[stepNumber + 1]);
+            setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+        }
+    };
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
-    };    
+    };
 
     return (
-        <div className='container'>
+        <div className={`container`}>
             <div className='actions-board'>
                 <select 
                     onChange={(e) => {
@@ -88,8 +112,14 @@ export const Board: React.FC = () => {
                     <option value={25}>25x25</option>
                     <option value={30}>30x30</option>
                 </select> | 
-                <button onClick={resetGame} className='button-reset'>&#8635;</button> | 
-                <span>Current turn: {currentPlayer}</span>
+                <button onClick={resetGame} className='button-reset'>Reset &#8635;</button> | 
+                <button onClick={undoMove} className='button-undo'>Undo &#x21A9;</button> | 
+                <button onClick={redoMove} className='button-redo'>Redo &#x21AA;</button> | 
+                <span 
+                    className={`current-turn ${currentPlayer === 'X' ? 'x-cell' : 'o-cell'}`}
+                >
+                    Current turn: {currentPlayer}
+                </span>
                 {winner && <span>| Winner: {winner}</span>}
             </div>
             <div className='board-main'>
@@ -100,7 +130,7 @@ export const Board: React.FC = () => {
                                 <div
                                     key={colIndex}
                                     onClick={() => handleClick(rowIndex, colIndex)}
-                                    className={`cell ${winningLine.some(([r, c]) => r === rowIndex && c === colIndex) ? 'winning-cell' : ''}`}
+                                    className={`cell ${winningLine.some(([r, c]) => r === rowIndex && c === colIndex) ? 'winning-cell' : ''} ${cell === 'X' ? 'x-cell' : cell === 'O' ? 'o-cell' : ''}`}
                                 >
                                     {cell}
                                 </div>

@@ -54,3 +54,27 @@
     transform-origin: left center;
     pointer-events: none;
 }
+
+
+.x-cell {
+    color: red;
+}
+
+.o-cell {
+    color: blue;
+}
+
+.container.light {
+    background-color: white;
+    color: black;
+}
+
+.container.dark {
+    background-color: black;
+    color: white;
+}
+
+.button-theme {
+    cursor: pointer;
+}
+
